@@ -43,13 +43,15 @@
 
 已交付：`src/guardrails.py` 拒绝未通过审核、未确认的替代时段和无时区时间；`DraftStore` 在事务内复核已有排期与已保存草稿，并使用 UTC 规范化时间。`tests/test_guardrails.py` 覆盖越权拒绝、显式确认、时区校验和并发冲突。
 
-## 阶段四：真实 ReAct Agent
+## 阶段四：真实 ReAct Agent（已完成）
 
 使用 OpenAI SDK 的兼容 Tool Calling 接入 DeepSeek。AgentRunner 每轮最多执行一个工具调用，收到工具结果后再请求模型决定下一步；最大工具调用次数为 10。
 
 实现 `finish` 结构化结束动作，支持 `COMPLETED`、`NEEDS_CONFIRMATION`、`BLOCKED`、`INCOMPLETE` 等任务状态。工具异常、模型无效参数和步数耗尽都要写入 Trace。
 
 阶段完成条件：M01 能走完“审核通过 → 发现冲突 → 查询候选 → 请求确认”；确认后能重新核验并保存草稿。M03 或 M05 能根据工具结果停止排期。
+
+已交付：`src/llm_client.py` 的 DeepSeek 兼容客户端、`src/agent.py` 的单工具 ReAct 循环、结构化 `finish`、Trace 和 10 次调用上限，以及 `src/main.py` 的 `plan`/`confirm` CLI 入口。`tests/test_agent.py` 用协议边界假客户端验证冲突改走候选、风险阻断和审核通过后保存；这些测试不代表真实模型决策质量。
 
 ## 阶段五：离线测试与真实 Trace
 

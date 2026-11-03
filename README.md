@@ -2,7 +2,7 @@
 
 基于证据审核、安全约束与动态排期的 ReAct Agent，面向小影（VivaVideo）内容运营场景。
 
-当前仓库已完成环境与合成数据基线。目标是让 Agent 读取合成短视频素材、版权与审核资料，使用 DeepSeek 的 Tool Calling 根据工具结果动态选择下一步，并只保存可确认的排期草稿，不执行真实发布。
+当前仓库已完成环境、确定性业务工具、安全边界和真实模型 ReAct Runner。Agent 读取合成短视频素材、版权与审核资料，使用 DeepSeek 的 Tool Calling 根据工具结果动态选择下一步，并只保存可确认的排期草稿，不执行真实发布。
 
 ## 当前设计
 
@@ -45,4 +45,4 @@ cp .env.example .env
 
 ## 项目状态
 
-已完成阶段一：uv 环境、合成数据、输入样例和 CLI 启动入口。核心 Agent、业务工具、SQLite 保存和端到端 Trace 将按 [docs/06-implementation-plan.md](docs/06-implementation-plan.md) 分阶段实现；当前尚未声称这些能力已经完成。
+已完成阶段一至四：uv 环境、合成数据、确定性工具、SQLite 安全保存和真实模型 ReAct Runner。离线模型入口、真实 Trace 和交付评估仍按计划补齐；当前不把协议假客户端测试当成真实模型效果证明。

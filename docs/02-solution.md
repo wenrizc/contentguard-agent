@@ -16,6 +16,8 @@ CLI
 
 AgentRunner 每轮把模型选择的一个工具调用发送到本地工具，工具结果以结构化 `tool` 消息回填给模型。Runner 设置最大 10 次工具调用；超限返回 `INCOMPLETE`。
 
+阶段四的 `src/agent.py` 使用 OpenAI SDK 兼容的 Chat Completions Tool Calling 接口接入 DeepSeek。Runner 不根据素材 ID 或风险类型预设下一步；它只把模型选中的调用分发给确定性工具，再把结果交回模型。`finish` 是同一工具协议中的结构化结束动作，Runner 只校验保存事实和必填字段，拒绝后继续把明确的边界原因返回模型。
+
 ## 工具职责
 
 - `get_material` 只读取素材档案和证据引用，不判定审核通过。
