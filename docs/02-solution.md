@@ -25,6 +25,15 @@ AgentRunner 每轮把模型选择的一个工具调用发送到本地工具，�
 - `save_draft` 在 SQLite 事务内重新检查审核资格、授权时间和排期冲突，并依据唯一业务键幂等写入。
 - `finish` 将模型的结构化结论交给结果校验，不把模型结论改写成另一种状态。
 
+阶段二已经落地的确定性实现位于 `src/tools/`、`src/moderation/` 和 `src/storage.py`：
+
+- `MaterialTool.get_material` 返回 `FOUND` 或 `NOT_FOUND`，并显式返回授权资料是否存在。
+- `ReviewTool.check_rules` 返回 `PASSED`、`PENDING`、`BLOCKED`、`UNKNOWN` 或 `ERROR`，每个风险包含规则 ID、严重级别、原因和证据来源。
+- `ScheduleTool.check_slot` 返回指定区间的冲突项；`find_slots` 只返回按小时网格计算出的候选，不代表用户确认。
+- `DraftStore.save_draft` 使用 SQLite 业务唯一键实现重复提交幂等，并把数据库错误返回为 `FAILED`。
+
+这些工具目前可在没有模型的情况下直接测试。审核资格、确认权限和保存前并发核验会在阶段三集中由 Guardrails 补上。
+
 ## Guardrails
 
 Guardrails 是副作用边界，不是隐藏的业务决策器。它可以拒绝：审核未通过时保存、未确认的替代时间保存、格式无效的时间、重复或冲突的写入。拒绝信息必须指出违反的规则，并将结果返回模型。

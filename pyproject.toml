@@ -20,3 +20,4 @@ index-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-q"
+pythonpath = ["."]
