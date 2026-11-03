@@ -1,0 +1,198 @@
+{
+  "execution_mode": "real_model",
+  "task_status": "NEEDS_CONFIRMATION",
+  "reason": "M01 审核通过（版权授权有效至 2027-01-01，覆盖抖音；Mock 视频审核 PASSED，无违规项）。但硬性指定时段 2026-11-06 18:00-18:30 与已确认排期 existing-001 完全冲突，按 ask_before_change 策略不擅自改期，需用户确认候选时段后再保存草稿。候选：19:00-19:30、21:00-21:30、22:00-22:30。",
+  "review_status": "PASSED",
+  "risk_reasons": [],
+  "suggested_start": "2026-11-06T19:00:00+08:00",
+  "confirmation_status": "PENDING",
+  "pending_items": [
+    "用户确认建议时段"
+  ],
+  "save_status": "NOT_ATTEMPTED",
+  "trace": [
+    {
+      "step": 1,
+      "tool": "get_material",
+      "parameters": {
+        "material_id": "M01",
+        "decision_basis": "需要先确认素材元数据、字幕与版权授权资料是否完整。"
+      },
+      "return_summary": {
+        "status": "INVALID_TOOL_TURN",
+        "reason_code": "ONE_TOOL_PER_TURN",
+        "reason": "每轮只能选择一个工具；请根据上一次结果重新选择。"
+      },
+      "next_action": "check_rules",
+      "decision_basis": "需要先确认素材元数据、字幕与版权授权资料是否完整。",
+      "tool_call_count": 2
+    },
+    {
+      "step": 2,
+      "tool": "check_rules",
+      "parameters": {
+        "material_id": "M01",
+        "platform": "douyin",
+        "decision_basis": "需要确认该素材在抖音平台的版权、字幕与品牌规则审核结果。"
+      },
+      "return_summary": {
+        "status": "INVALID_TOOL_TURN",
+        "reason_code": "ONE_TOOL_PER_TURN",
+        "reason": "每轮只能选择一个工具；请根据上一次结果重新选择。"
+      },
+      "next_action": "get_material",
+      "decision_basis": "需要确认该素材在抖音平台的版权、字幕与品牌规则审核结果。",
+      "tool_call_count": 2
+    },
+    {
+      "step": 3,
+      "tool": "get_material",
+      "parameters": {
+        "material_id": "M01",
+        "decision_basis": "需要先确认素材元数据、字幕与版权授权资料是否完整。"
+      },
+      "return_summary": {
+        "status": "FOUND",
+        "material": {
+          "material_id": "M01",
+          "title": "小影模板教学",
+          "media_uri": "synthetic://video/M01.mp4",
+          "duration_seconds": 42,
+          "subtitle_text": "三步完成节日短片剪辑",
+          "platforms": [
+            "douyin",
+            "xiaohongshu"
+          ],
+          "brand_tags": [
+            "product_tutorial"
+          ],
+          "copyright_reference": "COPY-M01-001"
+        },
+        "authorization": {
+          "material_id": "M01",
+          "reference": "COPY-M01-001",
+          "scope": [
+            "douyin",
+            "xiaohongshu"
+          ],
+          "valid_until": "2027-01-01T00:00:00+08:00",
+          "status": "VALID"
+        }
+      },
+      "next_action": "check_rules",
+      "decision_basis": "需要先确认素材元数据、字幕与版权授权资料是否完整。",
+      "tool_call_count": 3
+    },
+    {
+      "step": 4,
+      "tool": "check_rules",
+      "parameters": {
+        "material_id": "M01",
+        "platform": "douyin",
+        "decision_basis": "素材授权有效且覆盖抖音，需确认版权、字幕与品牌规则审核结果。"
+      },
+      "return_summary": {
+        "material_id": "M01",
+        "review_status": "PASSED",
+        "findings": [],
+        "evidence": {
+          "provider": "mock",
+          "moderation": {
+            "material_id": "M01",
+            "status": "PASSED",
+            "findings": [],
+            "evidence_source": "simulated_video_scan",
+            "error_code": null,
+            "error_message": null
+          }
+        },
+        "next_action": "CONTINUE"
+      },
+      "next_action": "check_slot",
+      "decision_basis": "素材授权有效且覆盖抖音，需确认版权、字幕与品牌规则审核结果。",
+      "tool_call_count": 4
+    },
+    {
+      "step": 5,
+      "tool": "check_slot",
+      "parameters": {
+        "account_id": "official_cn",
+        "start": "2026-11-06T18:00:00+08:00",
+        "duration_minutes": 30,
+        "decision_basis": "审核已通过，需确认硬性指定时段在 official_cn 账号是否可用。"
+      },
+      "return_summary": {
+        "account_id": "official_cn",
+        "start": "2026-11-06T18:00:00+08:00",
+        "end": "2026-11-06T18:30:00+08:00",
+        "available": false,
+        "conflicts": [
+          {
+            "account_id": "official_cn",
+            "material_id": "existing-001",
+            "start": "2026-11-06T18:00:00+08:00",
+            "end": "2026-11-06T18:30:00+08:00",
+            "status": "CONFIRMED"
+          }
+        ]
+      },
+      "next_action": "find_slots",
+      "decision_basis": "审核已通过，需确认硬性指定时段在 official_cn 账号是否可用。",
+      "tool_call_count": 5
+    },
+    {
+      "step": 6,
+      "tool": "find_slots",
+      "parameters": {
+        "account_id": "official_cn",
+        "requested_start": "2026-11-06T18:00:00+08:00",
+        "duration_minutes": 30,
+        "limit": 3,
+        "decision_basis": "硬性时段冲突且策略为变更前询问，需提供候选时段供用户确认。"
+      },
+      "return_summary": {
+        "account_id": "official_cn",
+        "requested_start": "2026-11-06T18:00:00+08:00",
+        "duration_minutes": 30,
+        "candidates": [
+          {
+            "start": "2026-11-06T19:00:00+08:00",
+            "end": "2026-11-06T19:30:00+08:00"
+          },
+          {
+            "start": "2026-11-06T21:00:00+08:00",
+            "end": "2026-11-06T21:30:00+08:00"
+          },
+          {
+            "start": "2026-11-06T22:00:00+08:00",
+            "end": "2026-11-06T22:30:00+08:00"
+          }
+        ]
+      },
+      "next_action": "finish",
+      "decision_basis": "硬性时段冲突且策略为变更前询问，需提供候选时段供用户确认。",
+      "tool_call_count": 6
+    },
+    {
+      "step": 7,
+      "tool": "finish",
+      "parameters": {
+        "task_status": "NEEDS_CONFIRMATION",
+        "reason": "M01 审核通过（版权授权有效至 2027-01-01，覆盖抖音；Mock 视频审核 PASSED，无违规项）。但硬性指定时段 2026-11-06 18:00-18:30 与已确认排期 existing-001 完全冲突，按 ask_before_change 策略不擅自改期，需用户确认候选时段后再保存草稿。候选：19:00-19:30、21:00-21:30、22:00-22:30。",
+        "suggested_start": "2026-11-06T19:00:00+08:00",
+        "confirmation_status": "PENDING"
+      },
+      "return_summary": {
+        "status": "ACCEPTED",
+        "task_status": "NEEDS_CONFIRMATION",
+        "reason": "M01 审核通过（版权授权有效至 2027-01-01，覆盖抖音；Mock 视频审核 PASSED，无违规项）。但硬性指定时段 2026-11-06 18:00-18:30 与已确认排期 existing-001 完全冲突，按 ask_before_change 策略不擅自改期，需用户确认候选时段后再保存草稿。候选：19:00-19:30、21:00-21:30、22:00-22:30。",
+        "suggested_start": "2026-11-06T19:00:00+08:00",
+        "confirmation_status": "PENDING"
+      },
+      "next_action": "END",
+      "decision_basis": "M01 审核通过（版权授权有效至 2027-01-01，覆盖抖音；Mock 视频审核 PASSED，无违规项）。但硬性指定时段 2026-11-06 18:00-18:30 与已确认排期 existing-001 完全冲突，按 ask_before_change 策略不擅自改期，需用户确认候选时段后再保存草稿。候选：19:00-19:30、21:00-21:30、22:00-22:30。",
+      "tool_call_count": 7
+    }
+  ],
+  "tool_call_count": 7
+}

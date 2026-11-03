@@ -25,7 +25,7 @@
 
 ## 当前状态
 
-阶段一至四的确定性和协议测试已通过；阶段五离线运行记录保存在 `examples/`，并明确标注 `execution_mode=offline_mock`。真实 DeepSeek 运行仍需凭据，若未录制必须在交付说明中如实说明。
+阶段一至五的确定性、协议和真实模型试跑均已完成。离线运行记录明确标注 `execution_mode=offline_mock`；真实模型记录标注 `execution_mode=real_model`，与离线记录分开保存。
 
 ## 已执行结果
 
@@ -39,8 +39,25 @@ uv run python -m src.main plan --offline --input examples/inputs/conflict.json \
   --trace examples/traces/offline-conflict.json
 ```
 
-结果：`20 passed`。离线冲突路径返回 `NEEDS_CONFIRMATION`，审核状态为 `PASSED`，建议 `2026-11-06T19:00:00+08:00`，未保存草稿，完整结果见 [examples/outputs/offline-conflict.json](../examples/outputs/offline-conflict.json)，对应 Trace 见 [examples/traces/offline-conflict.json](../examples/traces/offline-conflict.json)。确认路径见 [offline-confirm.json](../examples/outputs/offline-confirm.json)，返回 `COMPLETED`、`SAVED`；资料缺失、规则风险、审核错误和字段不完整分别见对应的 `offline-missing.json`、`offline-rule-risk.json`、`offline-moderation-error.json` 和 `offline-incomplete-moderation.json`。
+结果：`22 passed`。离线冲突路径返回 `NEEDS_CONFIRMATION`，审核状态为 `PASSED`，建议 `2026-11-06T19:00:00+08:00`，未保存草稿，完整结果见 [examples/outputs/offline-conflict.json](../examples/outputs/offline-conflict.json)，对应 Trace 见 [examples/traces/offline-conflict.json](../examples/traces/offline-conflict.json)。确认路径见 [offline-confirm.json](../examples/outputs/offline-confirm.json)，返回 `COMPLETED`、`SAVED`；资料缺失、规则风险、审核错误和字段不完整分别见对应的 `offline-missing.json`、`offline-rule-risk.json`、`offline-moderation-error.json` 和 `offline-incomplete-moderation.json`。
 
 保存失败使用 `examples/fixtures/save-failure-db/` 作为不可写的数据库目录，运行结果见 [offline-save-failure.json](../examples/outputs/offline-save-failure.json)。工具返回 `save_status=FAILED`，Agent 没有报告草稿保存成功。
 
-当前执行环境没有配置 `LLM_API_KEY`，因此尚未录制真实 DeepSeek Trace。离线记录只证明工具协议、状态和边界流程，不能证明真实模型会作出相同决策。
+离线记录只证明工具协议、状态和边界流程，不能证明真实模型会作出相同决策。
+
+真实模型运行命令与结果：
+
+```bash
+uv run python -m src.main plan --input examples/inputs/conflict.json \
+  --db /tmp/contentguard-real-conflict.sqlite \
+  --trace examples/traces/real-conflict.json
+uv run python -m src.main confirm --input examples/inputs/conflict.json \
+  --agreed-time 2026-11-06T19:00:00+08:00 \
+  --db /tmp/contentguard-real-confirm.sqlite \
+  --trace examples/traces/real-confirm.json
+uv run python -m src.main plan --input examples/inputs/missing-info.json \
+  --db /tmp/contentguard-real-missing.sqlite \
+  --trace examples/traces/real-missing-info.json
+```
+
+实际结果：冲突路径为 `NEEDS_CONFIRMATION`，确认路径为 `COMPLETED/SAVED/CONFIRMED`，缺版权资料路径为 `BLOCKED/PENDING`。结果和 Trace 分别见 `examples/outputs/real-*.json` 与 `examples/traces/real-*.json`。运行期间没有把 API Key 写入输出；多 Tool Call 被边界拒绝后模型重试成功，累计调用次数仍低于 10 次上限。

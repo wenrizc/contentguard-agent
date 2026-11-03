@@ -15,7 +15,7 @@
 
 ## 验证边界
 
-本仓库没有提交真实密钥，也没有在当前环境配置 `LLM_API_KEY`，因此没有把离线假客户端结果描述为真实 DeepSeek 决策效果。真实模型接入只通过 `OpenAIChatClient`，需要评审者在本地配置 `.env` 后录制脱敏 Trace。
+本仓库没有提交真实密钥。真实试跑使用本地 `.env` 的 `LLM_API_KEY`，接入只通过 `OpenAIChatClient`；输出经过检查未包含密钥，真实结果保存为 `examples/outputs/real-*.json` 和 `examples/traces/real-*.json`。离线假客户端结果仍只证明流程，不能替代真实模型决策效果。
 
 ## 凭据与隐私
 

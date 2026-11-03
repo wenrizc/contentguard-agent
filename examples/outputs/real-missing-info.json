@@ -1,0 +1,114 @@
+{
+  "execution_mode": "real_model",
+  "task_status": "BLOCKED",
+  "reason": "素材 M02《旅行转场合集》缺少覆盖抖音平台的有效版权授权（R-COPYRIGHT-001，高风险），审核状态 PENDING，规则要求补充缺失资料，无法保存排期草稿。请补充版权授权文件后重新提交审核。",
+  "review_status": "PENDING",
+  "risk_reasons": [
+    {
+      "rule_id": "R-COPYRIGHT-001",
+      "category": "copyright",
+      "severity": "high",
+      "reason": "缺少覆盖目标平台的有效版权授权",
+      "evidence": {
+        "platform": "douyin",
+        "authorization": null
+      }
+    }
+  ],
+  "suggested_start": null,
+  "confirmation_status": null,
+  "pending_items": [
+    "补充审核所需资料"
+  ],
+  "save_status": "NOT_ATTEMPTED",
+  "trace": [
+    {
+      "step": 1,
+      "tool": "get_material",
+      "parameters": {
+        "material_id": "M02",
+        "decision_basis": "审核前需先确认素材元数据、字幕与版权授权资料是否完整。"
+      },
+      "return_summary": {
+        "status": "FOUND",
+        "material": {
+          "material_id": "M02",
+          "title": "旅行转场合集",
+          "media_uri": "synthetic://video/M02.mp4",
+          "duration_seconds": 38,
+          "subtitle_text": "把旅途剪成一段故事",
+          "platforms": [
+            "douyin"
+          ],
+          "brand_tags": [
+            "travel"
+          ],
+          "copyright_reference": null
+        },
+        "authorization": null
+      },
+      "next_action": "check_rules",
+      "decision_basis": "审核前需先确认素材元数据、字幕与版权授权资料是否完整。",
+      "tool_call_count": 1
+    },
+    {
+      "step": 2,
+      "tool": "check_rules",
+      "parameters": {
+        "material_id": "M02",
+        "platform": "douyin",
+        "decision_basis": "素材版权授权资料缺失，需通过规则检查确认是否可审核通过。"
+      },
+      "return_summary": {
+        "material_id": "M02",
+        "review_status": "PENDING",
+        "findings": [
+          {
+            "rule_id": "R-COPYRIGHT-001",
+            "category": "copyright",
+            "severity": "high",
+            "reason": "缺少覆盖目标平台的有效版权授权",
+            "evidence": {
+              "platform": "douyin",
+              "authorization": null
+            }
+          }
+        ],
+        "evidence": {
+          "provider": "mock",
+          "moderation": {
+            "material_id": "M02",
+            "status": "PASSED",
+            "findings": [],
+            "evidence_source": "simulated_video_scan",
+            "error_code": null,
+            "error_message": null
+          }
+        },
+        "next_action": "REQUEST_MISSING_INFO"
+      },
+      "next_action": "finish",
+      "decision_basis": "素材版权授权资料缺失，需通过规则检查确认是否可审核通过。",
+      "tool_call_count": 2
+    },
+    {
+      "step": 3,
+      "tool": "finish",
+      "parameters": {
+        "task_status": "BLOCKED",
+        "reason": "素材 M02《旅行转场合集》缺少覆盖抖音平台的有效版权授权（R-COPYRIGHT-001，高风险），审核状态 PENDING，规则要求补充缺失资料，无法保存排期草稿。请补充版权授权文件后重新提交审核。"
+      },
+      "return_summary": {
+        "status": "ACCEPTED",
+        "task_status": "BLOCKED",
+        "reason": "素材 M02《旅行转场合集》缺少覆盖抖音平台的有效版权授权（R-COPYRIGHT-001，高风险），审核状态 PENDING，规则要求补充缺失资料，无法保存排期草稿。请补充版权授权文件后重新提交审核。",
+        "suggested_start": null,
+        "confirmation_status": null
+      },
+      "next_action": "END",
+      "decision_basis": "素材 M02《旅行转场合集》缺少覆盖抖音平台的有效版权授权（R-COPYRIGHT-001，高风险），审核状态 PENDING，规则要求补充缺失资料，无法保存排期草稿。请补充版权授权文件后重新提交审核。",
+      "tool_call_count": 3
+    }
+  ],
+  "tool_call_count": 3
+}

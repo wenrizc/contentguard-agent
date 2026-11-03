@@ -36,6 +36,28 @@ class ScriptedClient:
         )
 
 
+class MultiCallThenScriptedClient:
+    def __init__(self) -> None:
+        self.calls = 0
+        self.seen_messages: list[list[dict]] = []
+
+    def complete(self, messages: list[dict], tools: list[dict]) -> ChatResponse:
+        self.calls += 1
+        self.seen_messages.append(messages)
+        if self.calls == 1:
+            return ChatResponse(
+                content=None,
+                tool_calls=[
+                    ToolCall("call-a", "get_material", json.dumps({"material_id": "M01"})),
+                    ToolCall("call-b", "check_rules", json.dumps({"material_id": "M01", "platform": "douyin"})),
+                ],
+            )
+        return ChatResponse(
+            content=None,
+            tool_calls=[ToolCall("call-c", "finish", json.dumps({"task_status": "BLOCKED", "reason": "测试结束"}))],
+        )
+
+
 def task(material_id: str, requested_start: str, hard_time: bool = False) -> TaskInput:
     return TaskInput(
         source_request_id=f"REQ-AGENT-{material_id}",
@@ -178,4 +200,21 @@ def test_tool_call_budget_returns_incomplete(tmp_path: Path) -> None:
     assert result["task_status"] == "INCOMPLETE"
     assert result["reason_code"] == "MAX_TOOL_CALLS"
     assert result["tool_call_count"] == 2
+
+
+def test_multiple_tool_calls_are_fully_acknowledged_before_retry(tmp_path: Path) -> None:
+    client = MultiCallThenScriptedClient()
+    result = AgentRunner(
+        client,
+        build_dependencies(DataCatalog(ROOT / "data"), tmp_path / "multiple.sqlite"),
+    ).run(task("M01", "2026-11-06T19:00:00+08:00"))
+    assert result["task_status"] == "BLOCKED"
+    assert result["trace"][0]["return_summary"]["reason_code"] == "ONE_TOOL_PER_TURN"
+    assert result["trace"][1]["return_summary"]["reason_code"] == "ONE_TOOL_PER_TURN"
+    second_turn_tool_ids = {
+        message["tool_call_id"]
+        for message in client.seen_messages[1]
+        if message.get("role") == "tool"
+    }
+    assert second_turn_tool_ids == {"call-a", "call-b"}
 

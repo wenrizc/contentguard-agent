@@ -257,13 +257,14 @@ class AgentRunner:
             messages.append(self._assistant_message(response))
             if len(response.tool_calls) != 1:
                 calls += len(response.tool_calls)
-                result = {
-                    "status": "INVALID_TOOL_TURN",
-                    "reason_code": "ONE_TOOL_PER_TURN",
-                    "reason": "每轮只能选择一个工具；请根据上一次结果重新选择。",
-                }
-                self._record(state, response.tool_calls[0], result, calls)
-                messages.append(self._tool_message(response.tool_calls[0], result))
+                for call in response.tool_calls:
+                    result = {
+                        "status": "INVALID_TOOL_TURN",
+                        "reason_code": "ONE_TOOL_PER_TURN",
+                        "reason": "每轮只能选择一个工具；请根据上一次结果重新选择。",
+                    }
+                    self._record(state, call, result, calls)
+                    messages.append(self._tool_message(call, result))
                 continue
 
             call = response.tool_calls[0]
@@ -400,7 +401,10 @@ class AgentRunner:
                 "parameters": arguments,
                 "return_summary": result,
                 "next_action": "END" if call.name == "finish" else "pending_model_decision",
-                "decision_basis": arguments.get("decision_basis", "未提供；依据保留在结构化工具结果中"),
+                "decision_basis": arguments.get(
+                    "decision_basis",
+                    arguments.get("reason", "未提供；依据保留在结构化工具结果中"),
+                ),
                 "tool_call_count": calls,
             }
         )

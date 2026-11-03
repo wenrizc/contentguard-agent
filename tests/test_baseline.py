@@ -5,6 +5,11 @@ import subprocess
 import sys
 from pathlib import Path
 
+import pytest
+from pydantic import ValidationError
+
+from src.schemas import TaskInput
+
 
 ROOT = Path(__file__).parents[1]
 
@@ -52,4 +57,20 @@ def test_cli_help_starts() -> None:
     assert "审核短视频素材" in result.stdout
     assert "plan" in result.stdout
     assert "confirm" in result.stdout
+
+
+def test_v1_task_accepts_one_material_only() -> None:
+    with pytest.raises(ValidationError):
+        TaskInput.model_validate(
+            {
+                "source_request_id": "REQ-BATCH-001",
+                "material_ids": ["M01", "M02"],
+                "account_id": "official_cn",
+                "platform": "douyin",
+                "requested_start": "2026-11-06T19:00:00+08:00",
+                "duration_minutes": 30,
+                "hard_time": False,
+                "conflict_policy": "ask_before_change",
+            }
+        )
 

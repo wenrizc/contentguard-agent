@@ -87,7 +87,7 @@ class TaskInput(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     source_request_id: str
-    material_ids: list[str] = Field(min_length=1)
+    material_ids: list[str] = Field(min_length=1, max_length=1)
     account_id: str
     platform: str
     requested_start: datetime
