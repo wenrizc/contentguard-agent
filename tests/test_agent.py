@@ -239,3 +239,14 @@ def test_multiple_tool_calls_are_fully_acknowledged_before_retry(tmp_path: Path)
     }
     assert second_turn_tool_ids == {"call-a", "call-b"}
 
+
+def test_tool_call_budget_caps_a_multi_call_turn(tmp_path: Path) -> None:
+    result = AgentRunner(
+        MultiCallThenScriptedClient(),
+        build_dependencies(DataCatalog(ROOT / "data"), tmp_path / "multi-limit.sqlite"),
+        max_tool_calls=1,
+    ).run(task("M01", "2026-11-06T19:00:00+08:00"))
+    assert result["task_status"] == "INCOMPLETE"
+    assert result["reason_code"] == "MAX_TOOL_CALLS"
+    assert result["tool_call_count"] == 1
+

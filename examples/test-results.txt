@@ -4,7 +4,7 @@ ContentGuard Agent 交付验证记录
 
 $ uv run pytest -q
 .........................                                                [100%]
-25 passed
+31 passed
 
 $ uv run python -m src.main --help
 usage: contentguard [-h] {plan,confirm} ...
@@ -21,6 +21,8 @@ $ git diff --check
 - 时段冲突：outputs/offline-conflict.json，traces/offline-conflict.json
 - 重复提交：outputs/offline-duplicate.json，traces/offline-duplicate.json
 - 保存失败：outputs/offline-save-failure.json，traces/offline-save-failure.json
+
+CLI 端到端验收测试逐项断言正常排期、资料缺失、规则风险、时段冲突和保存失败；重复提交由独立 CLI 幂等测试断言。工具调用上限和多工具调用超限由 Agent 测试断言 `INCOMPLETE/MAX_TOOL_CALLS`。
 
 真实模型路径：
 - 冲突并请求确认：outputs/real-conflict.json，traces/real-conflict.json

@@ -39,7 +39,7 @@ uv run python -m src.main plan --offline --input examples/inputs/conflict.json \
   --trace examples/traces/offline-conflict.json
 ```
 
-结果：`25 passed`，完整命令和输出见 [examples/test-results.txt](../examples/test-results.txt)。离线冲突路径返回 `NEEDS_CONFIRMATION`，审核状态为 `PASSED`，建议 `2026-11-06T19:00:00+08:00`，未保存草稿，完整结果见 [examples/outputs/offline-conflict.json](../examples/outputs/offline-conflict.json)，对应 Trace 见 [examples/traces/offline-conflict.json](../examples/traces/offline-conflict.json)。确认路径见 [offline-confirm.json](../examples/outputs/offline-confirm.json)，返回 `COMPLETED`、`SAVED`；资料缺失、规则风险、审核错误和字段不完整分别见对应的 `offline-missing.json`、`offline-rule-risk.json`、`offline-moderation-error.json` 和 `offline-incomplete-moderation.json`。
+结果：`31 passed`，完整命令和输出见 [examples/test-results.txt](../examples/test-results.txt)。离线冲突路径返回 `NEEDS_CONFIRMATION`，审核状态为 `PASSED`，建议 `2026-11-06T19:00:00+08:00`，未保存草稿，完整结果见 [examples/outputs/offline-conflict.json](../examples/outputs/offline-conflict.json)，对应 Trace 见 [examples/traces/offline-conflict.json](../examples/traces/offline-conflict.json)。确认路径见 [offline-confirm.json](../examples/outputs/offline-confirm.json)，返回 `COMPLETED`、`SAVED`；资料缺失、规则风险、审核错误和字段不完整分别见对应的 `offline-missing.json`、`offline-rule-risk.json`、`offline-moderation-error.json` 和 `offline-incomplete-moderation.json`。
 
 保存失败使用 `examples/fixtures/save-failure-db/` 作为不可写的数据库目录，运行结果见 [offline-save-failure.json](../examples/outputs/offline-save-failure.json)。工具返回 `save_status=FAILED`，Agent 没有报告草稿保存成功。
 
@@ -63,6 +63,15 @@ uv run python -m src.main plan --input examples/inputs/missing-info.json \
 ```
 
 实际结果：冲突路径为 `NEEDS_CONFIRMATION`，确认路径为 `COMPLETED/SAVED/CONFIRMED`，缺版权资料路径为 `BLOCKED/PENDING`。结果和 Trace 分别见 `examples/outputs/real-*.json` 与 `examples/traces/real-*.json`。每份真实 Trace 均标注 `model`、UTC `recorded_at` 和脱敏说明。运行期间没有把 API Key 写入输出；多 Tool Call 被边界拒绝后模型重试成功，累计调用次数仍低于 10 次上限。
+
+两条真实模型执行路径的动作变化如下：
+
+| 路径 | 工具结果 | 模型后续动作 | 记录 |
+| --- | --- | --- | --- |
+| M01 时段冲突 | `check_slot.available=false` | 选择 `find_slots`，再以 `NEEDS_CONFIRMATION` 结束 | [real-conflict.json](../examples/traces/real-conflict.json) |
+| M02 资料缺失 | `check_rules.review_status=PENDING`，版权证据为空 | 跳过排期和保存，选择 `finish(BLOCKED)` | [real-missing-info.json](../examples/traces/real-missing-info.json) |
+
+每个 Trace 步骤均包含 `step`、`tool`、`parameters`、`return_summary`、`next_action` 和 `decision_basis`，不保存模型隐藏思维过程。Agent 的工具调用上限为 10；达到上限返回 `task_status=INCOMPLETE` 和 `reason_code=MAX_TOOL_CALLS`，对应测试也覆盖多工具调用超限。
 
 ## 已知限制与未完成部分
 

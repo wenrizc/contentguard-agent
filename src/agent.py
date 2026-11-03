@@ -257,8 +257,9 @@ class AgentRunner:
 
             messages.append(self._assistant_message(response))
             if len(response.tool_calls) != 1:
-                calls += len(response.tool_calls)
-                for call in response.tool_calls:
+                remaining = self.max_tool_calls - calls
+                for call in response.tool_calls[:remaining]:
+                    calls += 1
                     result = {
                         "status": "INVALID_TOOL_TURN",
                         "reason_code": "ONE_TOOL_PER_TURN",
@@ -266,6 +267,13 @@ class AgentRunner:
                     }
                     self._record(state, call, result, calls)
                     messages.append(self._tool_message(call, result))
+                if len(response.tool_calls) > remaining:
+                    return self._incomplete(
+                        state,
+                        "MAX_TOOL_CALLS",
+                        f"已达到工具调用上限 {self.max_tool_calls}，任务未完成。",
+                        calls,
+                    )
                 continue
 
             call = response.tool_calls[0]
