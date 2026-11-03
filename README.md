@@ -24,11 +24,12 @@ python -m src.main plan --input examples/inputs/missing-info.json --offline
 ## 环境
 
 ```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
+uv sync
+uv run python -m src.main --help
 cp .env.example .env
 ```
+
+项目使用 `uv` 统一管理 Python 版本约束、依赖和锁文件，不维护 `requirements.txt`。默认使用清华 PyPI 镜像，开发和测试命令统一通过 `uv run` 执行。
 
 真实模型运行需要自行配置 DeepSeek API Key。禁止把真实密钥提交到仓库。
 
@@ -40,6 +41,7 @@ cp .env.example .env
 - [docs/03-evaluation.md](docs/03-evaluation.md)：测试计划、Trace 规范和已知限制。
 - [docs/04-ai-usage.md](docs/04-ai-usage.md)：AI 辅助范围、个人修改和验证记录。
 - [docs/05-retrospective.md](docs/05-retrospective.md)：开发复盘，完成后补充。
+- [docs/06-implementation-plan.md](docs/06-implementation-plan.md)：分阶段实施计划。
 
 ## 项目状态
 

@@ -27,6 +27,7 @@ ContentGuard Agent 为小影内容运营提供素材审核与发布排期草稿�
 - 测试必须覆盖正常、资料不足、规则风险、时段冲突、重复提交、保存失败和步数上限。
 - 真实模型 Trace 和离线测试 Trace 分开存放并明确标注。
 - 不测试 Prompt 文案本身，不把固定 Mock 模型反应当成真实模型效果。
+- 依赖、虚拟环境和命令统一使用 `uv`，不要新增或恢复 `requirements.txt`。
 
 ## 文档要求
 
@@ -35,8 +36,8 @@ ContentGuard Agent 为小影内容运营提供素材审核与发布排期草稿�
 ## 提交前检查
 
 ```bash
-pytest -q
-python -m src.main --help
+uv run pytest -q
+uv run python -m src.main --help
 git status --short
 ```
 
