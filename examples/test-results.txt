@@ -1,0 +1,30 @@
+ContentGuard Agent 交付验证记录
+执行目录：仓库根目录
+验证日期：2026-11-04
+
+$ uv run pytest -q
+.........................                                                [100%]
+25 passed
+
+$ uv run python -m src.main --help
+usage: contentguard [-h] {plan,confirm} ...
+
+审核短视频素材并生成可确认的排期草稿。
+
+$ git diff --check
+通过（无输出）
+
+离线场景材料：
+- 正常：outputs/offline-normal.json，traces/offline-normal.json
+- 资料缺失：outputs/offline-missing.json，traces/offline-missing.json
+- 规则风险：outputs/offline-rule-risk.json，traces/offline-rule-risk.json
+- 时段冲突：outputs/offline-conflict.json，traces/offline-conflict.json
+- 重复提交：outputs/offline-duplicate.json，traces/offline-duplicate.json
+- 保存失败：outputs/offline-save-failure.json，traces/offline-save-failure.json
+
+真实模型路径：
+- 冲突并请求确认：outputs/real-conflict.json，traces/real-conflict.json
+- 用户确认后保存：outputs/real-confirm.json，traces/real-confirm.json
+- 资料缺失后阻断：outputs/real-missing-info.json，traces/real-missing-info.json
+
+离线 Mock 仅验证工具协议、状态边界和保存结果；真实 Trace 才用于展示模型工具选择路径，不能据此声称视频审核识别质量。
