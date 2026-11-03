@@ -1,0 +1,50 @@
+{
+  "schema_version": "1.0",
+  "provider": "mock",
+  "results": [
+    {
+      "material_id": "M01",
+      "status": "PASSED",
+      "findings": [],
+      "evidence_source": "simulated_video_scan"
+    },
+    {
+      "material_id": "M02",
+      "status": "PASSED",
+      "findings": [],
+      "evidence_source": "simulated_video_scan"
+    },
+    {
+      "material_id": "M03",
+      "status": "BLOCKED",
+      "findings": [
+        {
+          "category": "violence",
+          "severity": "high",
+          "timestamp_seconds": 12.5,
+          "evidence_source": "simulated_video_frame"
+        }
+      ],
+      "evidence_source": "simulated_video_frame"
+    },
+    {
+      "material_id": "M04",
+      "status": "PASSED",
+      "findings": [],
+      "evidence_source": "simulated_video_scan"
+    },
+    {
+      "material_id": "M05",
+      "status": "ERROR",
+      "error_code": "MODERATION_TIMEOUT",
+      "error_message": "模拟审核服务超时",
+      "evidence_source": "simulated_provider_error"
+    },
+    {
+      "material_id": "M06",
+      "status": "UNKNOWN",
+      "findings": null,
+      "evidence_source": null
+    }
+  ]
+}

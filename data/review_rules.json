@@ -1,0 +1,27 @@
+{
+  "schema_version": "1.0",
+  "rules": [
+    {
+      "rule_id": "R-COPYRIGHT-001",
+      "name": "版权授权必须存在且覆盖目标平台",
+      "category": "copyright",
+      "severity": "high",
+      "action": "REQUEST_MISSING_INFO"
+    },
+    {
+      "rule_id": "R-CLAIM-001",
+      "name": "禁止未经证实的效果承诺",
+      "category": "brand_safety",
+      "severity": "high",
+      "match_terms": ["保证让你的视频播放量翻十倍"],
+      "action": "BLOCK"
+    },
+    {
+      "rule_id": "R-VIDEO-001",
+      "name": "视频审核高风险内容阻断排期",
+      "category": "content_safety",
+      "severity": "high",
+      "action": "BLOCK"
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0",
+  "materials": [
+    {
+      "material_id": "M01",
+      "title": "小影模板教学",
+      "media_uri": "synthetic://video/M01.mp4",
+      "duration_seconds": 42,
+      "subtitle_text": "三步完成节日短片剪辑",
+      "platforms": ["douyin", "xiaohongshu"],
+      "brand_tags": ["product_tutorial"],
+      "copyright_reference": "COPY-M01-001"
+    },
+    {
+      "material_id": "M02",
+      "title": "旅行转场合集",
+      "media_uri": "synthetic://video/M02.mp4",
+      "duration_seconds": 38,
+      "subtitle_text": "把旅途剪成一段故事",
+      "platforms": ["douyin"],
+      "brand_tags": ["travel"],
+      "copyright_reference": null
+    },
+    {
+      "material_id": "M03",
+      "title": "节奏剪辑示例",
+      "media_uri": "synthetic://video/M03.mp4",
+      "duration_seconds": 31,
+      "subtitle_text": "跟着节拍快速剪辑",
+      "platforms": ["douyin"],
+      "brand_tags": ["editing_tips"],
+      "copyright_reference": "COPY-M03-001"
+    },
+    {
+      "material_id": "M04",
+      "title": "效果宣传示例",
+      "media_uri": "synthetic://video/M04.mp4",
+      "duration_seconds": 27,
+      "subtitle_text": "保证让你的视频播放量翻十倍",
+      "platforms": ["douyin"],
+      "brand_tags": ["marketing"],
+      "copyright_reference": "COPY-M04-001"
+    },
+    {
+      "material_id": "M05",
+      "title": "滤镜功能介绍",
+      "media_uri": "synthetic://video/M05.mp4",
+      "duration_seconds": 29,
+      "subtitle_text": "用滤镜统一视频色调",
+      "platforms": ["douyin"],
+      "brand_tags": ["product_tutorial"],
+      "copyright_reference": "COPY-M05-001"
+    },
+    {
+      "material_id": "M06",
+      "title": "音乐卡点示例",
+      "media_uri": "synthetic://video/M06.mp4",
+      "duration_seconds": 35,
+      "subtitle_text": "让画面和音乐自然衔接",
+      "platforms": ["douyin"],
+      "brand_tags": ["editing_tips"],
+      "copyright_reference": "COPY-M06-001"
+    }
+  ]
+}
