@@ -1,5 +1,8 @@
 {
   "execution_mode": "real_model",
+  "model": "deepseek-chat",
+  "recorded_at": "2026-11-03T17:22:00.722203+00:00",
+  "redaction": "Trace 仅保存脱敏工具参数和结构化返回，不保存 API Key 或模型隐藏思维过程。",
   "task_status": "BLOCKED",
   "reason": "素材 M02《旅行转场合集》缺少覆盖抖音平台的有效版权授权（R-COPYRIGHT-001，高风险），审核状态 PENDING，规则要求补充缺失资料，无法保存排期草稿。请补充版权授权文件后重新提交审核。",
   "review_status": "PENDING",

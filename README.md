@@ -4,6 +4,13 @@
 
 当前仓库已完成环境、确定性业务工具、安全边界和真实模型 ReAct Runner。Agent 读取合成短视频素材、版权与审核资料，使用 DeepSeek 的 Tool Calling 根据工具结果动态选择下一步，并只保存可确认的排期草稿，不执行真实发布。
 
+## 考核交付信息
+
+- 题号：题目 1「素材审核与发布排期 Agent」
+- GitHub：<https://github.com/wenrizc/contentguard-agent>
+- 最终提交：提交评审时运行 `git rev-parse HEAD`，并将输出作为最终 commit SHA
+- 入口：CLI；评审优先运行 `uv sync && uv run pytest -q`，再按下方命令检查离线路径
+
 ## 当前设计
 
 - **真实模型决策**：默认通过 OpenAI 兼容 SDK 调用 DeepSeek。
@@ -12,7 +19,7 @@
 - **安全边界**：审核未通过、审核结果缺失、硬性时间未确认和保存失败都不能被报告为成功。
 - **离线入口**：离线模型只验证流程与工具协议，不证明真实模型的决策效果。
 
-## 计划中的运行方式
+## 运行方式
 
 ```bash
 uv run python -m src.main plan --input examples/inputs/conflict.json
@@ -20,6 +27,8 @@ uv run python -m src.main confirm --input examples/inputs/conflict.json \
   --agreed-time 2026-11-06T19:00:00+08:00
 uv run python -m src.main plan --input examples/inputs/missing-info.json --offline
 ```
+
+离线模式不需要密钥，只验证工具协议、状态边界和保存结果；真实模型模式需要配置 `.env` 中的 `LLM_API_KEY`。
 
 ## 环境
 

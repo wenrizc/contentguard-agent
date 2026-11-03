@@ -1,5 +1,8 @@
 {
   "execution_mode": "real_model",
+  "model": "deepseek-chat",
+  "recorded_at": "2026-11-03T17:21:56.518749+00:00",
+  "redaction": "Trace 仅保存脱敏工具参数和结构化返回，不保存 API Key 或模型隐藏思维过程。",
   "task_status": "COMPLETED",
   "reason": "M01 审核通过（无 findings）、授权 COPY-M01-001 有效至 2027-01-01 且覆盖抖音；原定 18:00 与用户确认的 19:00 时段复核均无冲突，已按用户显式确认的 2026-11-06 19:00 (+08:00) 保存排期草稿（save_status=SAVED，非发布）。",
   "review_status": "PASSED",

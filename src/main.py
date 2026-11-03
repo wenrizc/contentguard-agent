@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 from pydantic import ValidationError
@@ -55,7 +55,14 @@ def main(argv: list[str] | None = None) -> int:
         if args.command == "confirm":
             confirmed_start = datetime.fromisoformat(args.agreed_time)
         result = runner.run(task, confirmed_start=confirmed_start)
-        result = {"execution_mode": "offline_mock" if args.offline else "real_model", **result}
+        execution_mode = "offline_mock" if args.offline else "real_model"
+        result = {
+            "execution_mode": execution_mode,
+            "model": "offline_scenario_client" if args.offline else getattr(client, "model", "unknown"),
+            "recorded_at": datetime.now(timezone.utc).isoformat(),
+            "redaction": "Trace 仅保存脱敏工具参数和结构化返回，不保存 API Key 或模型隐藏思维过程。",
+            **result,
+        }
         rendered = json.dumps(result, ensure_ascii=False, indent=2)
         if args.trace:
             args.trace.parent.mkdir(parents=True, exist_ok=True)

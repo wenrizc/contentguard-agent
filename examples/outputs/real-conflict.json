@@ -1,5 +1,8 @@
 {
   "execution_mode": "real_model",
+  "model": "deepseek-chat",
+  "recorded_at": "2026-11-03T17:21:49.275097+00:00",
+  "redaction": "Trace 仅保存脱敏工具参数和结构化返回，不保存 API Key 或模型隐藏思维过程。",
   "task_status": "NEEDS_CONFIRMATION",
   "reason": "M01 审核通过（版权授权有效至 2027-01-01，覆盖抖音；Mock 视频审核 PASSED，无违规项）。但硬性指定时段 2026-11-06 18:00-18:30 与已确认排期 existing-001 完全冲突，按 ask_before_change 策略不擅自改期，需用户确认候选时段后再保存草稿。候选：19:00-19:30、21:00-21:30、22:00-22:30。",
   "review_status": "PASSED",

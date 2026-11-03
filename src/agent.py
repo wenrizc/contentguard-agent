@@ -197,6 +197,7 @@ class FinishArgs(BaseModel):
 
 @dataclass
 class AgentState:
+    confirmed_start: datetime | None = None
     materials: dict[str, dict] = field(default_factory=dict)
     reviews: dict[str, ReviewResult] = field(default_factory=dict)
     saves: dict[str, dict] = field(default_factory=dict)
@@ -230,7 +231,7 @@ class AgentRunner:
         self.max_tool_calls = max_tool_calls
 
     def run(self, task: TaskInput, confirmed_start: datetime | None = None) -> dict[str, Any]:
-        state = AgentState()
+        state = AgentState(confirmed_start=confirmed_start)
         messages: list[dict[str, Any]] = [
             {"role": "system", "content": SYSTEM_PROMPT},
             {
@@ -306,7 +307,11 @@ class AgentRunner:
                     args.account_id, args.requested_start, args.duration_minutes, args.limit
                 ), None
             if call.name == "save_draft":
-                return self._save(args=SaveArgs.model_validate(arguments), task=task, state=state), None
+                return self._save(
+                    args=SaveArgs.model_validate(arguments),
+                    task=task,
+                    state=state,
+                ), None
             if call.name == "finish":
                 finish = self._finish(FinishArgs.model_validate(arguments), task, state)
                 return {"status": "FINISH_SELECTED", **finish}, finish
@@ -321,7 +326,12 @@ class AgentRunner:
         if review is None:
             return self._invalid("REVIEW_REQUIRED", "保存前必须先取得该素材的 check_rules 结果。")
         permission = self.dependencies.guardrails.validate_save(
-            task, args.material_id, review, args.start, args.confirmation_status
+            task,
+            args.material_id,
+            review,
+            args.start,
+            args.confirmation_status,
+            confirmed_start=state.confirmed_start,
         )
         if not permission["allowed"]:
             return {

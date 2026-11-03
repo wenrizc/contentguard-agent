@@ -22,8 +22,13 @@ class Guardrails:
         review: ReviewResult,
         proposed_start: datetime,
         confirmation_status: Literal["PENDING", "CONFIRMED", "NOT_REQUIRED"],
+        confirmed_start: datetime | None = None,
     ) -> dict:
-        if task.requested_start.tzinfo is None or proposed_start.tzinfo is None:
+        if (
+            task.requested_start.tzinfo is None
+            or proposed_start.tzinfo is None
+            or (confirmed_start is not None and confirmed_start.tzinfo is None)
+        ):
             return self._reject(
                 "TIMEZONE_REQUIRED",
                 "任务时段和待保存时段必须包含时区。",
@@ -47,6 +52,14 @@ class Guardrails:
                 code,
                 "候选时段与原始请求不同，必须先取得用户对该时段的显式确认。",
                 requested_start=task.requested_start.isoformat(),
+                proposed_start=proposed_start.isoformat(),
+            )
+
+        if changed_time and (confirmed_start is None or proposed_start != confirmed_start):
+            return self._reject(
+                "HARD_TIME_CHANGE_REQUIRES_CONFIRMATION" if task.hard_time else "CONFIRMATION_REQUIRED",
+                "待保存时段必须与本次用户明确确认的时段完全一致。",
+                confirmed_start=confirmed_start.isoformat() if confirmed_start else "",
                 proposed_start=proposed_start.isoformat(),
             )
 

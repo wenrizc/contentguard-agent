@@ -53,7 +53,7 @@ def test_guardrails_reject_review_and_unconfirmed_time_change() -> None:
     assert rejected_review["reason_code"] == "REVIEW_NOT_PASSED"
 
     rejected_time = guardrails.validate_save(
-        task(True), "M01", passed_review(), ALTERNATIVE, "PENDING"
+        task(True), "M01", passed_review(), ALTERNATIVE, "PENDING", confirmed_start=ALTERNATIVE
     )
     assert rejected_time["allowed"] is False
     assert rejected_time["reason_code"] == "HARD_TIME_CHANGE_REQUIRES_CONFIRMATION"
@@ -62,7 +62,7 @@ def test_guardrails_reject_review_and_unconfirmed_time_change() -> None:
 
 def test_guardrails_allow_explicitly_confirmed_alternative() -> None:
     result = Guardrails().validate_save(
-        task(True), "M01", passed_review(), ALTERNATIVE, "CONFIRMED"
+        task(True), "M01", passed_review(), ALTERNATIVE, "CONFIRMED", confirmed_start=ALTERNATIVE
     )
     assert result == {"allowed": True, "reason_code": "ALLOWED", "reason": "审核通过且保存权限满足。"}
 
@@ -73,6 +73,19 @@ def test_guardrails_reject_naive_timestamp() -> None:
     )
     assert result["allowed"] is False
     assert result["reason_code"] == "TIMEZONE_REQUIRED"
+
+
+def test_guardrails_reject_confirmation_for_a_different_time() -> None:
+    result = Guardrails().validate_save(
+        task(True),
+        "M01",
+        passed_review(),
+        datetime.fromisoformat("2026-11-06T20:00:00+08:00"),
+        "CONFIRMED",
+        confirmed_start=ALTERNATIVE,
+    )
+    assert result["allowed"] is False
+    assert result["reason_code"] == "HARD_TIME_CHANGE_REQUIRES_CONFIRMATION"
 
 
 def test_store_rechecks_conflicts_inside_transaction(tmp_path: Path) -> None:

@@ -39,9 +39,11 @@ uv run python -m src.main plan --offline --input examples/inputs/conflict.json \
   --trace examples/traces/offline-conflict.json
 ```
 
-结果：`22 passed`。离线冲突路径返回 `NEEDS_CONFIRMATION`，审核状态为 `PASSED`，建议 `2026-11-06T19:00:00+08:00`，未保存草稿，完整结果见 [examples/outputs/offline-conflict.json](../examples/outputs/offline-conflict.json)，对应 Trace 见 [examples/traces/offline-conflict.json](../examples/traces/offline-conflict.json)。确认路径见 [offline-confirm.json](../examples/outputs/offline-confirm.json)，返回 `COMPLETED`、`SAVED`；资料缺失、规则风险、审核错误和字段不完整分别见对应的 `offline-missing.json`、`offline-rule-risk.json`、`offline-moderation-error.json` 和 `offline-incomplete-moderation.json`。
+结果：`25 passed`。离线冲突路径返回 `NEEDS_CONFIRMATION`，审核状态为 `PASSED`，建议 `2026-11-06T19:00:00+08:00`，未保存草稿，完整结果见 [examples/outputs/offline-conflict.json](../examples/outputs/offline-conflict.json)，对应 Trace 见 [examples/traces/offline-conflict.json](../examples/traces/offline-conflict.json)。确认路径见 [offline-confirm.json](../examples/outputs/offline-confirm.json)，返回 `COMPLETED`、`SAVED`；资料缺失、规则风险、审核错误和字段不完整分别见对应的 `offline-missing.json`、`offline-rule-risk.json`、`offline-moderation-error.json` 和 `offline-incomplete-moderation.json`。
 
 保存失败使用 `examples/fixtures/save-failure-db/` 作为不可写的数据库目录，运行结果见 [offline-save-failure.json](../examples/outputs/offline-save-failure.json)。工具返回 `save_status=FAILED`，Agent 没有报告草稿保存成功。
+
+重复提交使用 [duplicate.json](../examples/inputs/duplicate.json) 连续运行两次，第二次结果见 [offline-duplicate.json](../examples/outputs/offline-duplicate.json)，Trace 中 `save_draft.return_summary.duplicate=true`，证明同一业务键只返回原草稿。
 
 离线记录只证明工具协议、状态和边界流程，不能证明真实模型会作出相同决策。
 
@@ -60,4 +62,10 @@ uv run python -m src.main plan --input examples/inputs/missing-info.json \
   --trace examples/traces/real-missing-info.json
 ```
 
-实际结果：冲突路径为 `NEEDS_CONFIRMATION`，确认路径为 `COMPLETED/SAVED/CONFIRMED`，缺版权资料路径为 `BLOCKED/PENDING`。结果和 Trace 分别见 `examples/outputs/real-*.json` 与 `examples/traces/real-*.json`。运行期间没有把 API Key 写入输出；多 Tool Call 被边界拒绝后模型重试成功，累计调用次数仍低于 10 次上限。
+实际结果：冲突路径为 `NEEDS_CONFIRMATION`，确认路径为 `COMPLETED/SAVED/CONFIRMED`，缺版权资料路径为 `BLOCKED/PENDING`。结果和 Trace 分别见 `examples/outputs/real-*.json` 与 `examples/traces/real-*.json`。每份真实 Trace 均标注 `model`、UTC `recorded_at` 和脱敏说明。运行期间没有把 API Key 写入输出；多 Tool Call 被边界拒绝后模型重试成功，累计调用次数仍低于 10 次上限。
+
+## 已知限制与未完成部分
+
+- 视频审核仍是标注为 `mock` 的合成结果，不能证明真实画面或音频识别效果。
+- V1 每次处理一个素材，只保存排期草稿，不执行正式发布。
+- 尚未接入生产身份权限、数据库迁移、并发压测和真实审核供应商；这些属于生产化工作，不是本题 V1 验收范围。

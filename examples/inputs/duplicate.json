@@ -1,0 +1,10 @@
+{
+  "source_request_id": "REQ-DUPLICATE-001",
+  "material_ids": ["M01"],
+  "account_id": "official_cn",
+  "platform": "douyin",
+  "requested_start": "2026-11-06T19:00:00+08:00",
+  "duration_minutes": 30,
+  "hard_time": false,
+  "conflict_policy": "ask_before_change"
+}

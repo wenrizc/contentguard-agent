@@ -164,6 +164,27 @@ def test_react_path_saves_only_after_passed_review(tmp_path: Path) -> None:
     assert result["trace"][2]["return_summary"]["duplicate"] is False
 
 
+def test_react_path_cannot_save_an_unconfirmed_alternative(tmp_path: Path) -> None:
+    client = ScriptedClient(
+        [
+            ("get_material", {"material_id": "M01"}),
+            ("check_rules", {"material_id": "M01", "platform": "douyin"}),
+            (
+                "save_draft",
+                {
+                    "material_id": "M01",
+                    "start": "2026-11-06T19:00:00+08:00",
+                    "confirmation_status": "CONFIRMED",
+                },
+            ),
+            ("finish", {"task_status": "BLOCKED", "reason": "未获得用户对替代时段的确认。"}),
+        ]
+    )
+    result = runner(client, tmp_path).run(task("M01", "2026-11-06T18:00:00+08:00", True))
+    assert result["trace"][2]["return_summary"]["reason_code"] == "HARD_TIME_CHANGE_REQUIRES_CONFIRMATION"
+    assert result["save_status"] == "NOT_ATTEMPTED"
+
+
 def test_save_cannot_escape_task_materials(tmp_path: Path) -> None:
     client = ScriptedClient(
         [
