@@ -32,7 +32,7 @@ AgentRunner 每轮把模型选择的一个工具调用发送到本地工具，�
 - `ScheduleTool.check_slot` 返回指定区间的冲突项；`find_slots` 只返回按小时网格计算出的候选，不代表用户确认。
 - `DraftStore.save_draft` 使用 SQLite 业务唯一键实现重复提交幂等，并把数据库错误返回为 `FAILED`。
 
-这些工具目前可在没有模型的情况下直接测试。审核资格、确认权限和保存前并发核验会在阶段三集中由 Guardrails 补上。
+这些工具目前可在没有模型的情况下直接测试。阶段三的 `Guardrails` 只负责审核资格、确认权限和时区约束；`DraftStore` 在 `BEGIN IMMEDIATE` 事务中复核占用区间，并在成功写入时登记 `DRAFT` 占用，避免确认后并发抢占。
 
 ## Guardrails
 

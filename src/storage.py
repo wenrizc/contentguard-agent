@@ -3,14 +3,17 @@
 from __future__ import annotations
 
 import sqlite3
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
+from typing import Iterable
 
-from .schemas import DraftInput
+from .schemas import DraftInput, ScheduleSlot
 
 
 class DraftStore:
-    def __init__(self, database_path: Path) -> None:
+    def __init__(self, database_path: Path, schedule_slots: Iterable[ScheduleSlot] = ()) -> None:
         self.database_path = database_path
+        self.schedule_slots = list(schedule_slots)
         self.database_path.parent.mkdir(parents=True, exist_ok=True)
         self._initialize()
 
@@ -38,11 +41,81 @@ class DraftStore:
                 )
                 """
             )
+            connection.execute(
+                """
+                CREATE TABLE IF NOT EXISTS occupied_slots (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    account_id TEXT NOT NULL,
+                    material_id TEXT NOT NULL,
+                    start TEXT NOT NULL,
+                    end TEXT NOT NULL,
+                    status TEXT NOT NULL,
+                    UNIQUE(account_id, material_id, start, end)
+                )
+                """
+            )
+            for slot in self.schedule_slots:
+                connection.execute(
+                    """
+                    INSERT OR IGNORE INTO occupied_slots
+                        (account_id, material_id, start, end, status)
+                    VALUES (?, ?, ?, ?, ?)
+                    """,
+                    (
+                        slot.account_id,
+                        slot.material_id,
+                        _canonical_time(slot.start),
+                        _canonical_time(slot.end),
+                        slot.status,
+                    ),
+                )
 
     def save_draft(self, draft: DraftInput) -> dict:
         try:
             with self._connect() as connection:
-                cursor = connection.execute(
+                connection.execute("BEGIN IMMEDIATE")
+                existing = connection.execute(
+                    """
+                    SELECT source_request_id, material_id, account_id, platform,
+                           start, duration_minutes, review_status,
+                           confirmation_status, evidence_json
+                    FROM drafts
+                    WHERE source_request_id = ? AND material_id = ?
+                      AND account_id = ? AND start = ?
+                    """,
+                    (
+                        draft.source_request_id,
+                        draft.material_id,
+                        draft.account_id,
+                        _canonical_time(draft.start),
+                    ),
+                ).fetchone()
+                if existing:
+                    return {
+                        "save_status": "SAVED",
+                        "duplicate": True,
+                        "draft": dict(existing),
+                    }
+
+                end = draft.start + timedelta(minutes=draft.duration_minutes)
+                conflicts = connection.execute(
+                    """
+                    SELECT account_id, material_id, start, end, status
+                    FROM occupied_slots
+                    WHERE account_id = ? AND start < ? AND end > ?
+                    """,
+                    (draft.account_id, _canonical_time(end), _canonical_time(draft.start)),
+                ).fetchall()
+                if conflicts:
+                    return {
+                        "save_status": "FAILED",
+                        "duplicate": False,
+                        "reason_code": "SLOT_CONFLICT",
+                        "reason": "保存前事务复核发现目标账号时段已被占用。",
+                        "conflicts": [dict(item) for item in conflicts],
+                    }
+
+                connection.execute(
                     """
                     INSERT OR IGNORE INTO drafts (
                         source_request_id, material_id, account_id, platform,
@@ -55,14 +128,25 @@ class DraftStore:
                         draft.material_id,
                         draft.account_id,
                         draft.platform,
-                        draft.start.isoformat(),
+                        _canonical_time(draft.start),
                         draft.duration_minutes,
                         draft.review_status,
                         draft.confirmation_status,
                         _json_dumps(draft.evidence),
                     ),
                 )
-                duplicate = cursor.rowcount == 0
+                connection.execute(
+                    """
+                    INSERT INTO occupied_slots (account_id, material_id, start, end, status)
+                    VALUES (?, ?, ?, ?, 'DRAFT')
+                    """,
+                    (
+                        draft.account_id,
+                        draft.material_id,
+                        _canonical_time(draft.start),
+                        _canonical_time(end),
+                    ),
+                )
                 row = connection.execute(
                     """
                     SELECT source_request_id, material_id, account_id, platform,
@@ -76,15 +160,15 @@ class DraftStore:
                         draft.source_request_id,
                         draft.material_id,
                         draft.account_id,
-                        draft.start.isoformat(),
+                        _canonical_time(draft.start),
                     ),
                 ).fetchone()
             return {
                 "save_status": "SAVED",
-                "duplicate": duplicate,
+                "duplicate": False,
                 "draft": dict(row) if row else None,
             }
-        except (OSError, sqlite3.Error) as exc:
+        except (OSError, ValueError, sqlite3.Error) as exc:
             return {
                 "save_status": "FAILED",
                 "duplicate": False,
@@ -96,4 +180,11 @@ def _json_dumps(value: dict) -> str:
     import json
 
     return json.dumps(value, ensure_ascii=False, sort_keys=True)
+
+
+def _canonical_time(value: datetime) -> str:
+    """Store aware timestamps in UTC so different offsets compare correctly."""
+    if value.tzinfo is None:
+        raise ValueError("timestamp must include timezone")
+    return value.astimezone(timezone.utc).isoformat()
 
