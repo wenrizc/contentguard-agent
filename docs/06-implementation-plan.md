@@ -66,7 +66,7 @@ Trace 保存步骤、工具参数、返回摘要、下一动作和简短决策�
 
 已交付离线部分：`src/offline.py` 根据上一次工具返回结果选择下一步，CLI 的 `--offline --trace` 可生成带 `execution_mode=offline_mock` 的流程记录。真实 DeepSeek Trace 仍需在配置凭据后录制；当前环境没有配置 `LLM_API_KEY`，离线结果不能证明模型决策质量。
 
-## 阶段六：文档与交付验证
+## 阶段六：文档与交付验证（已完成）
 
 完成 README、需求、方案、评估、AI 使用和复盘文档。`docs/03-evaluation.md` 引用 examples 下的实际输入、输出和 Trace，区分确定性测试、离线测试和真实模型验证。
 
@@ -81,3 +81,5 @@ git status --short
 ```
 
 交付内容必须包含可复制运行命令、环境变量说明、最终 commit SHA、已知限制和未完成部分。
+
+已交付：README、五份设计与评估文档、实际离线输出和 Trace、保存失败 fixture，以及 uv 测试和 CLI 验证记录。真实模型 Trace 因当前环境没有 API Key 保留为待评审者本地执行项。

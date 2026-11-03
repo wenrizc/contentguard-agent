@@ -4,8 +4,9 @@
   "reason": "审核通过并保存排期草稿。",
   "review_status": "PASSED",
   "risk_reasons": [],
-  "suggested_start": null,
+  "suggested_start": "2026-11-06T19:00:00+08:00",
   "confirmation_status": "CONFIRMED",
+  "pending_items": [],
   "save_status": "SAVED",
   "trace": [
     {
@@ -60,6 +61,7 @@
         "review_status": "PASSED",
         "findings": [],
         "evidence": {
+          "provider": "mock",
           "moderation": {
             "material_id": "M01",
             "status": "PASSED",
@@ -116,7 +118,7 @@
           "duration_minutes": 30,
           "review_status": "PASSED",
           "confirmation_status": "CONFIRMED",
-          "evidence_json": "{\"review\": {\"evidence\": {\"moderation\": {\"error_code\": null, \"error_message\": null, \"evidence_source\": \"simulated_video_scan\", \"findings\": [], \"material_id\": \"M01\", \"status\": \"PASSED\"}}, \"findings\": [], \"material_id\": \"M01\", \"next_action\": \"CONTINUE\", \"review_status\": \"PASSED\"}}"
+          "evidence_json": "{\"review\": {\"evidence\": {\"moderation\": {\"error_code\": null, \"error_message\": null, \"evidence_source\": \"simulated_video_scan\", \"findings\": [], \"material_id\": \"M01\", \"status\": \"PASSED\"}, \"provider\": \"mock\"}, \"findings\": [], \"material_id\": \"M01\", \"next_action\": \"CONTINUE\", \"review_status\": \"PASSED\"}}"
         }
       },
       "next_action": "finish",

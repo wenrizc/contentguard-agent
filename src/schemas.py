@@ -5,7 +5,13 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Any, Literal
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
+
+
+def _require_timezone(value: datetime) -> datetime:
+    if value.tzinfo is None:
+        raise ValueError("timestamp must include timezone")
+    return value
 
 
 class Material(BaseModel):
@@ -29,6 +35,8 @@ class Authorization(BaseModel):
     scope: list[str]
     valid_until: datetime
     status: Literal["VALID", "EXPIRED", "REVOKED"]
+
+    _valid_until_timezone = field_validator("valid_until")(_require_timezone)
 
 
 class ModerationFinding(BaseModel):
@@ -71,6 +79,9 @@ class ScheduleSlot(BaseModel):
     end: datetime
     status: Literal["CONFIRMED", "DRAFT"]
 
+    _start_timezone = field_validator("start")(_require_timezone)
+    _end_timezone = field_validator("end")(_require_timezone)
+
 
 class TaskInput(BaseModel):
     model_config = ConfigDict(extra="forbid")
@@ -83,6 +94,8 @@ class TaskInput(BaseModel):
     duration_minutes: int = Field(gt=0)
     hard_time: bool
     conflict_policy: Literal["ask_before_change", "reject"]
+
+    _requested_start_timezone = field_validator("requested_start")(_require_timezone)
 
 
 class DraftInput(BaseModel):
@@ -97,6 +110,8 @@ class DraftInput(BaseModel):
     review_status: str
     confirmation_status: Literal["PENDING", "CONFIRMED", "NOT_REQUIRED"]
     evidence: dict[str, Any] = Field(default_factory=dict)
+
+    _start_timezone = field_validator("start")(_require_timezone)
 
 
 class ReviewFinding(BaseModel):

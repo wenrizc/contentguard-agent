@@ -21,6 +21,12 @@ class ScheduleTool:
         self.catalog = catalog
 
     def check_slot(self, account_id: str, start: datetime, duration_minutes: int) -> dict:
+        if start.tzinfo is None:
+            return {
+                "status": "INVALID",
+                "reason_code": "TIMEZONE_REQUIRED",
+                "reason": "start 必须包含时区。",
+            }
         end = _end(start, duration_minutes)
         conflicts = [
             slot.model_dump(mode="json")
@@ -42,6 +48,12 @@ class ScheduleTool:
         duration_minutes: int,
         limit: int = 3,
     ) -> dict:
+        if requested_start.tzinfo is None:
+            return {
+                "status": "INVALID",
+                "reason_code": "TIMEZONE_REQUIRED",
+                "reason": "requested_start 必须包含时区。",
+            }
         # Candidate times use the business hourly grid; the model may present
         # these to the user but cannot treat them as confirmed.
         first_hour = requested_start.replace(minute=0, second=0, microsecond=0)

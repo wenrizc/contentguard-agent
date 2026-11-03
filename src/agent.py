@@ -200,6 +200,7 @@ class AgentState:
     materials: dict[str, dict] = field(default_factory=dict)
     reviews: dict[str, ReviewResult] = field(default_factory=dict)
     saves: dict[str, dict] = field(default_factory=dict)
+    proposed_starts: dict[str, str] = field(default_factory=dict)
     trace: list[dict[str, Any]] = field(default_factory=list)
 
 
@@ -341,6 +342,7 @@ class AgentRunner:
         )
         result = self.dependencies.draft_store.save_draft(draft)
         state.saves[args.material_id] = result
+        state.proposed_starts[args.material_id] = args.start.isoformat()
         return result
 
     def _finish(self, args: FinishArgs, task: TaskInput, state: AgentState) -> dict:
@@ -423,13 +425,22 @@ class AgentRunner:
                 if draft.get("confirmation_status"):
                     confirmation_status = draft["confirmation_status"]
                     break
+        suggested_start = finish.get("suggested_start")
+        if suggested_start is None and finish["task_status"] == "COMPLETED":
+            suggested_start = next(iter(state.proposed_starts.values()), task.requested_start.isoformat())
+        pending_items: list[str] = []
+        if finish["task_status"] == "NEEDS_CONFIRMATION":
+            pending_items.append("用户确认建议时段")
+        if review_status == "PENDING":
+            pending_items.append("补充审核所需资料")
         return {
             "task_status": finish["task_status"],
             "reason": finish["reason"],
             "review_status": review_status,
             "risk_reasons": findings,
-            "suggested_start": finish.get("suggested_start"),
+            "suggested_start": suggested_start,
             "confirmation_status": confirmation_status,
+            "pending_items": pending_items,
             "save_status": save_status,
             "trace": state.trace,
             "tool_call_count": calls,
@@ -450,6 +461,7 @@ class AgentRunner:
             "risk_reasons": [],
             "suggested_start": None,
             "confirmation_status": None,
+            "pending_items": [],
             "save_status": save_status,
             "trace": state.trace,
             "tool_call_count": calls,

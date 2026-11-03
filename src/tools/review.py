@@ -56,7 +56,7 @@ class ReviewTool:
                 )
 
         moderation = self.moderator.moderate(material_id)
-        evidence = {"moderation": moderation.model_dump(mode="json")}
+        evidence = {"provider": self.moderator.provider, "moderation": moderation.model_dump(mode="json")}
         if moderation.status == "ERROR":
             result = ReviewResult(
                 material_id=material_id,

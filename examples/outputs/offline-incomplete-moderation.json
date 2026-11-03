@@ -6,6 +6,7 @@
   "risk_reasons": [],
   "suggested_start": null,
   "confirmation_status": null,
+  "pending_items": [],
   "save_status": "NOT_ATTEMPTED",
   "trace": [
     {
@@ -58,6 +59,7 @@
         "review_status": "UNKNOWN",
         "findings": [],
         "evidence": {
+          "provider": "mock",
           "moderation": {
             "material_id": "M06",
             "status": "UNKNOWN",

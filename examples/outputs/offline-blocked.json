@@ -24,6 +24,7 @@
   ],
   "suggested_start": null,
   "confirmation_status": null,
+  "pending_items": [],
   "save_status": "NOT_ATTEMPTED",
   "trace": [
     {
@@ -94,6 +95,7 @@
           }
         ],
         "evidence": {
+          "provider": "mock",
           "moderation": {
             "material_id": "M03",
             "status": "BLOCKED",

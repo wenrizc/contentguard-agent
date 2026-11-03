@@ -6,6 +6,9 @@
   "risk_reasons": [],
   "suggested_start": "2026-11-06T19:00:00+08:00",
   "confirmation_status": "PENDING",
+  "pending_items": [
+    "用户确认建议时段"
+  ],
   "save_status": "NOT_ATTEMPTED",
   "trace": [
     {
@@ -60,6 +63,7 @@
         "review_status": "PASSED",
         "findings": [],
         "evidence": {
+          "provider": "mock",
           "moderation": {
             "material_id": "M01",
             "status": "PASSED",

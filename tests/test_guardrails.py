@@ -94,3 +94,22 @@ def test_store_rechecks_conflicts_inside_transaction(tmp_path: Path) -> None:
     assert second["save_status"] == "FAILED"
     assert second["reason_code"] == "SLOT_CONFLICT"
 
+
+def test_store_initialization_failure_is_reported_on_save(tmp_path: Path) -> None:
+    database_path = tmp_path / "database-directory"
+    database_path.mkdir()
+    store = DraftStore(database_path)
+    result = store.save_draft(
+        DraftInput(
+            source_request_id="REQ-INIT-FAIL-001",
+            material_id="M01",
+            account_id="official_cn",
+            platform="douyin",
+            start=ALTERNATIVE,
+            duration_minutes=30,
+            review_status="PASSED",
+            confirmation_status="NOT_REQUIRED",
+        )
+    )
+    assert result["save_status"] == "FAILED"
+

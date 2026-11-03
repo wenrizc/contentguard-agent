@@ -17,6 +17,9 @@
   ],
   "suggested_start": null,
   "confirmation_status": null,
+  "pending_items": [
+    "补充审核所需资料"
+  ],
   "save_status": "NOT_ATTEMPTED",
   "trace": [
     {
@@ -72,6 +75,7 @@
           }
         ],
         "evidence": {
+          "provider": "mock",
           "moderation": {
             "material_id": "M02",
             "status": "PASSED",

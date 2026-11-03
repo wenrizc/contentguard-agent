@@ -14,8 +14,12 @@ class DraftStore:
     def __init__(self, database_path: Path, schedule_slots: Iterable[ScheduleSlot] = ()) -> None:
         self.database_path = database_path
         self.schedule_slots = list(schedule_slots)
-        self.database_path.parent.mkdir(parents=True, exist_ok=True)
-        self._initialize()
+        self.initialization_error: dict[str, str] | None = None
+        try:
+            self.database_path.parent.mkdir(parents=True, exist_ok=True)
+            self._initialize()
+        except (OSError, ValueError, sqlite3.Error) as exc:
+            self.initialization_error = {"type": type(exc).__name__, "message": str(exc)}
 
     def _connect(self) -> sqlite3.Connection:
         connection = sqlite3.connect(self.database_path)
@@ -71,6 +75,12 @@ class DraftStore:
                 )
 
     def save_draft(self, draft: DraftInput) -> dict:
+        if self.initialization_error:
+            return {
+                "save_status": "FAILED",
+                "duplicate": False,
+                "error": self.initialization_error,
+            }
         try:
             with self._connect() as connection:
                 connection.execute("BEGIN IMMEDIATE")
