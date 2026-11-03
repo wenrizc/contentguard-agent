@@ -1,0 +1,146 @@
+{
+  "execution_mode": "offline_mock",
+  "task_status": "COMPLETED",
+  "reason": "审核通过并保存排期草稿。",
+  "review_status": "PASSED",
+  "risk_reasons": [],
+  "suggested_start": null,
+  "confirmation_status": "CONFIRMED",
+  "save_status": "SAVED",
+  "trace": [
+    {
+      "step": 1,
+      "tool": "get_material",
+      "parameters": {
+        "material_id": "M01",
+        "decision_basis": "读取素材证据"
+      },
+      "return_summary": {
+        "status": "FOUND",
+        "material": {
+          "material_id": "M01",
+          "title": "小影模板教学",
+          "media_uri": "synthetic://video/M01.mp4",
+          "duration_seconds": 42,
+          "subtitle_text": "三步完成节日短片剪辑",
+          "platforms": [
+            "douyin",
+            "xiaohongshu"
+          ],
+          "brand_tags": [
+            "product_tutorial"
+          ],
+          "copyright_reference": "COPY-M01-001"
+        },
+        "authorization": {
+          "material_id": "M01",
+          "reference": "COPY-M01-001",
+          "scope": [
+            "douyin",
+            "xiaohongshu"
+          ],
+          "valid_until": "2027-01-01T00:00:00+08:00",
+          "status": "VALID"
+        }
+      },
+      "next_action": "check_rules",
+      "decision_basis": "读取素材证据",
+      "tool_call_count": 1
+    },
+    {
+      "step": 2,
+      "tool": "check_rules",
+      "parameters": {
+        "material_id": "M01",
+        "platform": "douyin",
+        "decision_basis": "根据素材资料检查审核规则"
+      },
+      "return_summary": {
+        "material_id": "M01",
+        "review_status": "PASSED",
+        "findings": [],
+        "evidence": {
+          "moderation": {
+            "material_id": "M01",
+            "status": "PASSED",
+            "findings": [],
+            "evidence_source": "simulated_video_scan",
+            "error_code": null,
+            "error_message": null
+          }
+        },
+        "next_action": "CONTINUE"
+      },
+      "next_action": "check_slot",
+      "decision_basis": "根据素材资料检查审核规则",
+      "tool_call_count": 2
+    },
+    {
+      "step": 3,
+      "tool": "check_slot",
+      "parameters": {
+        "account_id": "official_cn",
+        "start": "2026-11-06T19:00:00+08:00",
+        "duration_minutes": 30,
+        "decision_basis": "审核通过后检查目标时段"
+      },
+      "return_summary": {
+        "account_id": "official_cn",
+        "start": "2026-11-06T19:00:00+08:00",
+        "end": "2026-11-06T19:30:00+08:00",
+        "available": true,
+        "conflicts": []
+      },
+      "next_action": "save_draft",
+      "decision_basis": "审核通过后检查目标时段",
+      "tool_call_count": 3
+    },
+    {
+      "step": 4,
+      "tool": "save_draft",
+      "parameters": {
+        "material_id": "M01",
+        "start": "2026-11-06T19:00:00+08:00",
+        "confirmation_status": "CONFIRMED",
+        "decision_basis": "时段可用，保存排期草稿"
+      },
+      "return_summary": {
+        "save_status": "SAVED",
+        "duplicate": false,
+        "draft": {
+          "source_request_id": "REQ-CONFLICT-001",
+          "material_id": "M01",
+          "account_id": "official_cn",
+          "platform": "douyin",
+          "start": "2026-11-06T11:00:00+00:00",
+          "duration_minutes": 30,
+          "review_status": "PASSED",
+          "confirmation_status": "CONFIRMED",
+          "evidence_json": "{\"review\": {\"evidence\": {\"moderation\": {\"error_code\": null, \"error_message\": null, \"evidence_source\": \"simulated_video_scan\", \"findings\": [], \"material_id\": \"M01\", \"status\": \"PASSED\"}}, \"findings\": [], \"material_id\": \"M01\", \"next_action\": \"CONTINUE\", \"review_status\": \"PASSED\"}}"
+        }
+      },
+      "next_action": "finish",
+      "decision_basis": "时段可用，保存排期草稿",
+      "tool_call_count": 4
+    },
+    {
+      "step": 5,
+      "tool": "finish",
+      "parameters": {
+        "task_status": "COMPLETED",
+        "reason": "审核通过并保存排期草稿。"
+      },
+      "return_summary": {
+        "status": "ACCEPTED",
+        "task_status": "COMPLETED",
+        "reason": "审核通过并保存排期草稿。",
+        "suggested_start": null,
+        "confirmation_status": null
+      },
+      "next_action": "END",
+      "decision_basis": "未提供；依据保留在结构化工具结果中",
+      "tool_call_count": 5
+    }
+  ],
+  "tool_call_count": 5
+}

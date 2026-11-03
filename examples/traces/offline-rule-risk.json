@@ -1,0 +1,122 @@
+{
+  "execution_mode": "offline_mock",
+  "task_status": "BLOCKED",
+  "reason": "审核结果未通过，需补充资料或处理风险。",
+  "review_status": "BLOCKED",
+  "risk_reasons": [
+    {
+      "rule_id": "R-CLAIM-001",
+      "category": "brand_safety",
+      "severity": "high",
+      "reason": "禁止未经证实的效果承诺",
+      "evidence": {
+        "matched_text": "保证让你的视频播放量翻十倍",
+        "match_terms": [
+          "保证让你的视频播放量翻十倍"
+        ]
+      }
+    }
+  ],
+  "suggested_start": null,
+  "confirmation_status": null,
+  "save_status": "NOT_ATTEMPTED",
+  "trace": [
+    {
+      "step": 1,
+      "tool": "get_material",
+      "parameters": {
+        "material_id": "M04",
+        "decision_basis": "读取素材证据"
+      },
+      "return_summary": {
+        "status": "FOUND",
+        "material": {
+          "material_id": "M04",
+          "title": "效果宣传示例",
+          "media_uri": "synthetic://video/M04.mp4",
+          "duration_seconds": 27,
+          "subtitle_text": "保证让你的视频播放量翻十倍",
+          "platforms": [
+            "douyin"
+          ],
+          "brand_tags": [
+            "marketing"
+          ],
+          "copyright_reference": "COPY-M04-001"
+        },
+        "authorization": {
+          "material_id": "M04",
+          "reference": "COPY-M04-001",
+          "scope": [
+            "douyin"
+          ],
+          "valid_until": "2027-01-01T00:00:00+08:00",
+          "status": "VALID"
+        }
+      },
+      "next_action": "check_rules",
+      "decision_basis": "读取素材证据",
+      "tool_call_count": 1
+    },
+    {
+      "step": 2,
+      "tool": "check_rules",
+      "parameters": {
+        "material_id": "M04",
+        "platform": "douyin",
+        "decision_basis": "根据素材资料检查审核规则"
+      },
+      "return_summary": {
+        "material_id": "M04",
+        "review_status": "BLOCKED",
+        "findings": [
+          {
+            "rule_id": "R-CLAIM-001",
+            "category": "brand_safety",
+            "severity": "high",
+            "reason": "禁止未经证实的效果承诺",
+            "evidence": {
+              "matched_text": "保证让你的视频播放量翻十倍",
+              "match_terms": [
+                "保证让你的视频播放量翻十倍"
+              ]
+            }
+          }
+        ],
+        "evidence": {
+          "moderation": {
+            "material_id": "M04",
+            "status": "PASSED",
+            "findings": [],
+            "evidence_source": "simulated_video_scan",
+            "error_code": null,
+            "error_message": null
+          }
+        },
+        "next_action": "BLOCK"
+      },
+      "next_action": "finish",
+      "decision_basis": "根据素材资料检查审核规则",
+      "tool_call_count": 2
+    },
+    {
+      "step": 3,
+      "tool": "finish",
+      "parameters": {
+        "task_status": "BLOCKED",
+        "reason": "审核结果未通过，需补充资料或处理风险。"
+      },
+      "return_summary": {
+        "status": "ACCEPTED",
+        "task_status": "BLOCKED",
+        "reason": "审核结果未通过，需补充资料或处理风险。",
+        "suggested_start": null,
+        "confirmation_status": null
+      },
+      "next_action": "END",
+      "decision_basis": "未提供；依据保留在结构化工具结果中",
+      "tool_call_count": 3
+    }
+  ],
+  "tool_call_count": 3
+}

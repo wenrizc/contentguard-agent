@@ -53,7 +53,7 @@
 
 已交付：`src/llm_client.py` 的 DeepSeek 兼容客户端、`src/agent.py` 的单工具 ReAct 循环、结构化 `finish`、Trace 和 10 次调用上限，以及 `src/main.py` 的 `plan`/`confirm` CLI 入口。`tests/test_agent.py` 用协议边界假客户端验证冲突改走候选、风险阻断和审核通过后保存；这些测试不代表真实模型决策质量。
 
-## 阶段五：离线测试与真实 Trace
+## 阶段五：离线测试与真实 Trace（离线部分已完成）
 
 通过模型客户端边界注入离线假模型，只验证工具协议、循环、Guardrails 和状态结果。离线结果必须标明不能证明真实模型决策质量。
 
@@ -63,6 +63,8 @@
 - 规则风险或审核错误，模型阻断后续排期。
 
 Trace 保存步骤、工具参数、返回摘要、下一动作和简短决策依据，不保存 API Key 或隐藏思维过程。
+
+已交付离线部分：`src/offline.py` 根据上一次工具返回结果选择下一步，CLI 的 `--offline --trace` 可生成带 `execution_mode=offline_mock` 的流程记录。真实 DeepSeek Trace 仍需在配置凭据后录制；当前环境没有配置 `LLM_API_KEY`，离线结果不能证明模型决策质量。
 
 ## 阶段六：文档与交付验证
 

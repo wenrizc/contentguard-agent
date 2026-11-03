@@ -25,4 +25,20 @@
 
 ## 当前状态
 
-本仓库初始化阶段尚未产生实际测试结果。实现完成后必须把命令、结果和失败限制补充到本文件，并在 `examples/` 保存至少三组实际输出。
+阶段一至四的确定性和协议测试已通过；阶段五离线运行记录保存在 `examples/`，并明确标注 `execution_mode=offline_mock`。真实 DeepSeek 运行仍需凭据，若未录制必须在交付说明中如实说明。
+
+## 已执行结果
+
+运行命令：
+
+```bash
+uv sync
+uv run pytest -q
+uv run python -m src.main plan --offline --input examples/inputs/conflict.json \
+  --db /tmp/contentguard-offline.sqlite \
+  --trace examples/traces/offline-conflict.json
+```
+
+结果：`19 passed`。离线冲突路径返回 `NEEDS_CONFIRMATION`，审核状态为 `PASSED`，建议 `2026-11-06T19:00:00+08:00`，未保存草稿，完整结果见 [examples/outputs/offline-conflict.json](../examples/outputs/offline-conflict.json)。确认路径见 [offline-confirm.json](../examples/outputs/offline-confirm.json)，返回 `COMPLETED`、`SAVED`；资料缺失、规则风险、审核错误和字段不完整分别见对应的 `offline-missing.json`、`offline-rule-risk.json`、`offline-moderation-error.json` 和 `offline-incomplete-moderation.json`。
+
+当前执行环境没有配置 `LLM_API_KEY`，因此尚未录制真实 DeepSeek Trace。离线记录只证明工具协议、状态和边界流程，不能证明真实模型会作出相同决策。

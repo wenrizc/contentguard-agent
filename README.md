@@ -15,10 +15,10 @@
 ## 计划中的运行方式
 
 ```bash
-python -m src.main plan --input examples/inputs/conflict.json
-python -m src.main confirm --input examples/inputs/conflict.json \
+uv run python -m src.main plan --input examples/inputs/conflict.json
+uv run python -m src.main confirm --input examples/inputs/conflict.json \
   --agreed-time 2026-11-06T19:00:00+08:00
-python -m src.main plan --input examples/inputs/missing-info.json --offline
+uv run python -m src.main plan --input examples/inputs/missing-info.json --offline
 ```
 
 ## 环境

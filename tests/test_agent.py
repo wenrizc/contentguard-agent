@@ -7,6 +7,7 @@ from pathlib import Path
 from src.agent import AgentRunner, build_dependencies
 from src.catalog import DataCatalog
 from src.llm_client import ChatResponse, ToolCall
+from src.offline import OfflineScenarioClient
 from src.schemas import TaskInput
 
 
@@ -158,4 +159,23 @@ def test_save_cannot_escape_task_materials(tmp_path: Path) -> None:
     )
     result = runner(client, tmp_path).run(task("M01", "2026-11-06T19:00:00+08:00"))
     assert result["trace"][1]["return_summary"]["reason_code"] == "MATERIAL_NOT_IN_TASK"
+
+
+def test_offline_client_follows_tool_result_for_conflict(tmp_path: Path) -> None:
+    catalog = DataCatalog(ROOT / "data")
+    agent = AgentRunner(OfflineScenarioClient(), build_dependencies(catalog, tmp_path / "offline.sqlite"))
+    result = agent.run(task("M01", "2026-11-06T18:00:00+08:00", True))
+    assert result["task_status"] == "NEEDS_CONFIRMATION"
+    assert result["trace"][2]["return_summary"]["available"] is False
+    assert result["trace"][3]["tool"] == "find_slots"
+
+
+def test_tool_call_budget_returns_incomplete(tmp_path: Path) -> None:
+    client = ScriptedClient([("get_material", {"material_id": "M01"})] * 3)
+    result = AgentRunner(client, build_dependencies(DataCatalog(ROOT / "data"), tmp_path / "limit.sqlite"), max_tool_calls=2).run(
+        task("M01", "2026-11-06T19:00:00+08:00")
+    )
+    assert result["task_status"] == "INCOMPLETE"
+    assert result["reason_code"] == "MAX_TOOL_CALLS"
+    assert result["tool_call_count"] == 2
 

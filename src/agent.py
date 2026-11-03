@@ -416,13 +416,20 @@ class AgentRunner:
             save_status = "SAVED"
         elif any(item.get("save_status") == "FAILED" for item in state.saves.values()):
             save_status = "FAILED"
+        confirmation_status = finish.get("confirmation_status")
+        if confirmation_status is None:
+            for saved in state.saves.values():
+                draft = saved.get("draft") or {}
+                if draft.get("confirmation_status"):
+                    confirmation_status = draft["confirmation_status"]
+                    break
         return {
             "task_status": finish["task_status"],
             "reason": finish["reason"],
             "review_status": review_status,
             "risk_reasons": findings,
             "suggested_start": finish.get("suggested_start"),
-            "confirmation_status": finish.get("confirmation_status"),
+            "confirmation_status": confirmation_status,
             "save_status": save_status,
             "trace": state.trace,
             "tool_call_count": calls,
